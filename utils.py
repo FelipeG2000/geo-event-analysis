@@ -76,3 +76,39 @@ def reduce_collection(collection: ee.ImageCollection, method: str = "mean") -> e
     else:
         raise collection.first()
 
+
+def mask_landsat_8sr(image):
+    """
+    Applies cloud and shadow masking to a Landsat 8 Surface Reflectance (SR) image
+    using the QA_PIXEL band. Also scales optical and thermal bands.
+
+    Args:
+        image (ee.Image): Landsat 8 SR image.
+
+    Returns:
+        ee.Image: Cloud-masked and scaled Landsat 8 image.
+    """
+    # Bitmasks for clouds and cloud shadows (from QA_PIXEL band)
+    cloud_shadow_bit_mask = (1 << 4)  # Bit 4: Cloud shadow
+    clouds_bit_mask = (1 << 3)       # Bit 3: Clouds
+
+    # Select QA_PIXEL band
+    qa = image.select('QA_PIXEL')
+
+    # Create mask
+    cloud_shadow_mask = qa.bitwiseAnd(cloud_shadow_bit_mask).eq(0)
+    clouds_mask = qa.bitwiseAnd(clouds_bit_mask).eq(0)
+    mask = cloud_shadow_mask.And(clouds_mask)
+
+    # Apply the mask to the image
+    image = image.updateMask(mask)
+
+    # Scale optical bands (SR_B.*) to reflectance values
+    optical_bands = image.select('SR_B.*').multiply(0.0000275).add(-0.2)
+
+    # Scale thermal bands (ST_B.*) to temperature values in Kelvin
+    thermal_bands = image.select('ST_B.*').multiply(0.00341802).add(149.0)
+
+    # Replace original bands with scaled versions
+    return image.addBands(optical_bands, None, True).addBands(
+        thermal_bands, None, True).copyProperties(image, ["system:time_start"])
