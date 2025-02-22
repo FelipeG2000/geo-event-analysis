@@ -42,7 +42,7 @@ def get_satellite_collection(
     Returns:
         ee.ImageCollection: The filtered image collection.
     """
-    if not points and not roi:
+    if points is None and roi is None:
         raise ValueError("roi or points must be provided.")
 
     collection = ee_client.ImageCollection(collection_id).filterDate(start, end)
