@@ -1,7 +1,7 @@
 import ee
 
 
-def generate_roi_from_points(ee_client, points: list):
+def generate_roi_from_points(ee_client: ee, points: list):
     """
     Generates a Region of Interest (ROI) from a list of points.
 
@@ -15,18 +15,11 @@ def generate_roi_from_points(ee_client, points: list):
     if not points or len(points) < 3:
         raise ValueError("At least three points are required to generate a valid ROI.")
 
-    return  ee_client.Geometry.MultiPoint(points)
+    return  ee_client.Geometry.MultiPoint(points).convexHull()
 
 
-def get_satellite_collection(
-    ee_client,
-    collection_id: str,
-    start: str,
-    end: str,
-    points: list = None,
-    roi = None,
-    bands: list = None
-):
+def get_satellite_collection(ee_client, collection_id: str, start: str, end: str, points: list = None, roi = None,
+    bands: list = None):
     """
     Retrieves a filtered ImageCollection from Google Earth Engine, supporting both points and predefined ROI.
 
