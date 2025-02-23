@@ -1,0 +1,4 @@
+*.tif
+.idea
+*.html
+__pycache__
