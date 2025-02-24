@@ -22,7 +22,7 @@ def get_landsat_data_set_from_la_mosca():
     - File name: `la_mosca_mean_{start_date}_{end_date}`
     """
 
-    dates = [(str(AAAA) + MM1, str(AAAA) + MM2) for AAAA in range(2024, 2025)
+    dates = [(str(AAAA) + MM1, str(AAAA) + MM2) for AAAA in range(2015, 2025)
               for MM1, MM2 in zip(['-01-01', '-04-01', '-07-01', '-10-01'],
                                   ['-03-31', '-06-30', '-09-30', '-12-31'])]
 
