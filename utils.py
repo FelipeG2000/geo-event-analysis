@@ -105,3 +105,31 @@ def mask_landsat_8sr(image):
     # Replace original bands with scaled versions
     return image.addBands(optical_bands, None, True).addBands(
         thermal_bands, None, True).copyProperties(image, ["system:time_start"])
+
+
+def mask_sentinel2_sr(image):
+    """
+    Applies a cloud and shadow mask to a Sentinel-2 image
+    using the Scene Classification Layer (SCL) band. It also scales reflectance values.
+
+    Args:
+        image (ee.Image): Sentinel-2 SR image.
+
+    Returns:
+        ee.Image: Cloud-free and scaled Sentinel-2 image.
+    """
+
+    # Select the Scene Classification Layer (SCL) band
+    scl = image.select('SCL')
+
+    # Create the mask by removing clouds (9, 10) and cloud shadows (3)
+    cloud_mask = scl.neq(9).And(scl.neq(10)).And(scl.neq(3))
+
+    # Apply the mask to the image
+    image = image.updateMask(cloud_mask)
+
+    # Scale all bands that start with "B" (to ensure none are lost)
+    optical_bands = image.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).multiply(0.0001)
+
+    # Replace original bands with the scaled ones
+    return image.addBands(optical_bands, None, True).copyProperties(image, ["system:time_start"])
