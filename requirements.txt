@@ -1,0 +1,11 @@
+# Google Earth Engine API for working with satellite images
+earthengine-api==1.5.2
+
+# Rasterio for handling and processing raster data
+rasterio==1.4.3
+
+# Matplotlib for data visualization
+matplotlib==3.10.0
+
+# NumPy for numerical computations
+numpy==2.2.2
