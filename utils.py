@@ -133,3 +133,18 @@ def mask_sentinel2_sr(image):
 
     # Replace original bands with the scaled ones
     return image.addBands(optical_bands, None, True).copyProperties(image, ["system:time_start"])
+
+
+def filter_landsat8_sr_st_bands(bands):
+    """Filters SR (Surface Reflectance) and ST (Surface Temperature) bands from a Landsat 8 band collection."""
+    return list(filter(lambda band: band.startswith(('SR', 'ST')), bands))
+
+
+def get_landsat8_visualization_params(band_name):
+    """Returns visualization parameters based on the Landsat 8 band type."""
+    visualization_defaults = {
+        'SR': {'min': 0, 'max': 1},
+        'ST': {'min': 270, 'max': 310}
+    }
+    return visualization_defaults.get(band_name[:2], {'min': 0, 'max': 255})  # Default for other bands
+
