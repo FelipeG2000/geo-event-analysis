@@ -1,7 +1,5 @@
 import rasterio
 import matplotlib.pyplot as plt
-import numpy as np
-import json
 
 
 def test_image(image_path: str, band: int = 1):
@@ -20,12 +18,6 @@ def test_image(image_path: str, band: int = 1):
         print(f"📏 Dimensions: {width} x {height} (Width x Height)")
         print(f"🛰️ CRS (Coordinate Reference System): {raster_crs}")
         print(f"🗺️ Transform: {transform}")
-        print(f"📜 Metadata:\n{json.dumps(meta, indent=4)}")
-
-        # Normalize data if necessary
-        if np.issubdtype(data.dtype, np.integer):
-            data = data.astype(np.float32)
-            data = (data - data.min()) / (data.max() - data.min() + 1e-5)
 
         # Visualization
         plt.figure(figsize=(8, 6))
@@ -45,4 +37,4 @@ def test_image(image_path: str, band: int = 1):
 
 
 if __name__ == "__main__":
-    test_image("image_name.tif", band=1)
+    test_image("imagen_name.tif", band=1)
