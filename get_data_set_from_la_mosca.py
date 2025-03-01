@@ -1,5 +1,3 @@
-import time
-
 from utils import *
 import ee
 
@@ -55,18 +53,7 @@ def get_landsat_data_set_from_la_mosca():
                 maxPixels=1e13
             )
             task.start()
-            while task.active():
-                status = task.status()
-                state = status.get('state')
-
-                if state == "FAILED":
-                    print(f"Error: {status.get('error_message')}")
-                    break
-                elif state == "CANCELLED":
-                    print("The export task was cancelled.")
-                    break
-
-                time.sleep(1)
+            monitor_task(task)
 
 
 def get_landsat_visualisation_data_set_from_la_mosca():
@@ -110,19 +97,7 @@ def get_landsat_visualisation_data_set_from_la_mosca():
                 maxPixels=1e13
             )
             task.start()
-            while task.active():
-                status = task.status()
-                state = status.get('state')
-
-                if state == "FAILED":
-                    print(f"Error: {status.get('error_message')}")
-                    break
-                elif state == "CANCELLED":
-                    print("The export task was cancelled.")
-                    break
-
-                time.sleep(1)
-
+            monitor_task(task)
 
 def get_sentinel2_data_set_from_la_mosca():
     """
@@ -168,19 +143,7 @@ def get_sentinel2_data_set_from_la_mosca():
                 maxPixels=1e13
             )
             task.start()
-
-            while task.active():
-                status = task.status()
-                state = status.get('state')
-
-                if state == "FAILED":
-                    print(f"Error: {status.get('error_message')}")
-                    break
-                elif state == "CANCELLED":
-                    print("The export task was cancelled.")
-                    break
-
-                time.sleep(1)
+            monitor_task(task)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import ee
-
+import time
 
 def generate_roi_from_points(ee_client: ee, points: list):
     """
@@ -170,3 +170,22 @@ def generate_date_ranges(start_year, end_year, frequency="quarterly"):
     }
     return [(str(year) + start, str(year) + end) for year in range(start_year, end_year + 1) for start, end in
             frequencies[frequency]]
+
+
+def monitor_task(task):
+    """
+    Monitors the status of an Earth Engine export task.
+
+    :param task: The Earth Engine task to monitor.
+    """
+    while task.active():
+        status = task.status()
+        state = status.get('state')
+
+        if state == "FAILED":
+            print(f"Error: {status.get('error_message')}")
+            break
+        elif state == "CANCELLED":
+            print("The export task was cancelled.")
+            break
+        time.sleep(1)

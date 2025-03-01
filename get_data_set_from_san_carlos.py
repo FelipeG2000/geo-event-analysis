@@ -1,5 +1,4 @@
 from utils import *
-import time
 import ee
 
 ee.Authenticate()
@@ -39,18 +38,7 @@ def get_landsat_data_set_from_san_carlos():
                 maxPixels=1e13
             )
             task.start()
-            while task.active():
-                status = task.status()
-                state = status.get('state')
-
-                if state == "FAILED":
-                    print(f"Error: {status.get('error_message')}")
-                    break
-                elif state == "CANCELLED":
-                    print("The export task was cancelled.")
-                    break
-
-                time.sleep(1)
+            monitor_task(task)
 
 
 def get_landsat_visualisation_data_set_from_san_carlos():
@@ -94,18 +82,7 @@ def get_landsat_visualisation_data_set_from_san_carlos():
                 maxPixels=1e13
             )
             task.start()
-            while task.active():
-                status = task.status()
-                state = status.get('state')
-
-                if state == "FAILED":
-                    print(f"Error: {status.get('error_message')}")
-                    break
-                elif state == "CANCELLED":
-                    print("The export task was cancelled.")
-                    break
-
-                time.sleep(1)
+            monitor_task(task)
 
 
 if __name__ == '__main__':
