@@ -129,7 +129,7 @@ def get_sentinel2_data_set_from_la_mosca():
     Retrieves and exports mean Landsat images of the La Mosca region for multiple date ranges.
 
     - Defines a region of interest (ROI) based on predefined coordinates.
-    - Extracts sentinel 2  8 imagery for each date range from 2015 to 2024.
+    - Extracts sentinel 2 imagery for each date range from 2018 to 2024.
     - Computes the mean image for each period.
     - Exports each band separately to Google Drive (organized by filename).
 
@@ -146,17 +146,17 @@ def get_sentinel2_data_set_from_la_mosca():
 
     roi_la_mosca = generate_roi_from_points(ee, points_la_mosca)
 
-    collection_sentinel2_path = 'COPERNICUS/S2_SR'
+    collection_sentinel2_path = "COPERNICUS/S2_SR_HARMONIZED"
 
     for date in dates:
 
-        sentinel1_collection_la_mosca = get_satellite_collection(ee_client=ee, collection_id=collection_sentinel2_path,
+        sentinel2_collection_la_mosca = get_satellite_collection(ee_client=ee, collection_id=collection_sentinel2_path,
                                                                  start=date[0], end=date[1], roi=roi_la_mosca)
-        image = sentinel1_collection_la_mosca.map(mask_sentinel2_sr).mean().clip(roi_la_mosca).reproject(crs='EPSG:4326',
+        image = sentinel2_collection_la_mosca.map(mask_sentinel2_sr).mean().clip(roi_la_mosca).reproject(crs='EPSG:4326',
                                                                                                          scale=10)
         for band in image.bandNames().getInfo():
             print(f"processing the follow band {band} of san carlos image in this dates {date[0]}-{date[1]}")
-            description = f"Mean image of La Mosca captured between {date[0]} and {date[1]}, using the {band} band."
+            description = f"Mean image La Mosca {date[0]} to {date[1]} using {band} band"
             task = ee.batch.Export.image.toDrive(
                 image=image.select(band),
                 description=description,
@@ -184,4 +184,4 @@ def get_sentinel2_data_set_from_la_mosca():
 
 
 if __name__ == '__main__':
-    get_landsat_visualisation_data_set_from_la_mosca()
+    get_sentinel2_data_set_from_la_mosca()
