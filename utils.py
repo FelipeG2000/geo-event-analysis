@@ -148,3 +148,25 @@ def get_landsat8_visualization_params(band_name):
     }
     return visualization_defaults.get(band_name[:2], {'min': 0, 'max': 255})  # Default for other bands
 
+
+def generate_date_ranges(start_year, end_year, frequency="quarterly"):
+    """
+    Generates date ranges based on the selected frequency.
+
+    :param start_year: Start year for the date range.
+    :param end_year: End year for the date range.
+    :param frequency: Frequency of the date ranges. Options: "monthly", "bimonthly", "quarterly", "four_months", "six_months".
+    :return: List of tuples with start and end dates.
+    """
+    frequencies = {
+        "monthly": [('-01-01', '-01-31'), ('-02-01', '-02-28'), ('-03-01', '-03-31'), ('-04-01', '-04-30'),
+                    ('-05-01', '-05-31'), ('-06-01', '-06-30'), ('-07-01', '-07-31'), ('-08-01', '-08-31'),
+                    ('-09-01', '-09-30'), ('-10-01', '-10-31'), ('-11-01', '-11-30'), ('-12-01', '-12-31')],
+        "bimonthly": [('-01-01', '-02-28'), ('-03-01', '-04-30'), ('-05-01', '-06-30'), ('-07-01', '-08-31'),
+                      ('-09-01', '-10-31'), ('-11-01', '-12-31')],
+        "quarterly": [('-01-01', '-03-31'), ('-04-01', '-06-30'), ('-07-01', '-09-30'), ('-10-01', '-12-31')],
+        "four_months": [('-01-01', '-04-30'), ('-05-01', '-08-31'), ('-09-01', '-12-31')],
+        "six_months": [('-01-01', '-06-30'), ('-07-01', '-12-31')]
+    }
+    return [(str(year) + start, str(year) + end) for year in range(start_year, end_year + 1) for start, end in
+            frequencies[frequency]]
