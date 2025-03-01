@@ -57,5 +57,60 @@ def get_landsat_data_set_from_cocorna():
                 time.sleep(1)
 
 
+def get_landsat_visualisation_data_set_from_cocorna():
+    """
+    Retrieves and exports mean visualized Landsat images of the La Mosca region for multiple date ranges.
+
+    - Defines a region of interest (ROI) based on predefined coordinates.
+    - Extracts Landsat 8 imagery for each date range from 2015 to 2024.
+    - Computes the mean image for each period.
+    - Exports each band separately to Google Drive (organized by filename).
+
+    The exported files follow this naming convention:
+    - File name: `cocorna_mean_{start_date}_{end_date}`
+    """
+
+    dates = generate_date_ranges(2023, 2025)
+
+    collection_landsta_path = 'LANDSAT/LC08/C02/T1_L2'
+
+    for date in dates:
+
+        landsat_collection_cocorna = get_satellite_collection(ee_client=ee,
+                                                               collection_id=collection_landsta_path,
+                                                               start=date[0],
+                                                               end=date[1],
+                                                               roi=ROI_COCORNA)
+        image = landsat_collection_cocorna.map(mask_landsat_8sr).mean().clip(ROI_COCORNA).reproject(crs='EPSG:4326',
+                                                                                                      scale=30)
+        for band in filter_landsat8_sr_st_bands(image.bandNames().getInfo()):
+            print(f"processing the follow band {band} of san carlos image in this dates {date[0]}-{date[1]}")
+            description = f"Mean image of Cocorna captured between {date[0]} and {date[1]}, using the {band} band."
+            visualization = get_landsat8_visualization_params(band)
+            task = ee.batch.Export.image.toDrive(
+                image=image.select(band).visualize(**visualization),
+                description=description,
+                folder=f'{band}',
+                fileNamePrefix=f"cocorna_mean_{date[0]}_{date[1]}",
+                region=ROI_COCORNA.bounds().getInfo()['coordinates'],
+                scale=30,
+                crs='EPSG:4326',
+                maxPixels=1e13
+            )
+            task.start()
+            while task.active():
+                status = task.status()
+                state = status.get('state')
+
+                if state == "FAILED":
+                    print(f"Error: {status.get('error_message')}")
+                    break
+                elif state == "CANCELLED":
+                    print("The export task was cancelled.")
+                    break
+
+                time.sleep(1)
+
+
 if __name__ == '__main__':
-    get_landsat_data_set_from_cocorna()
+    get_landsat_visualisation_data_set_from_cocorna()
