@@ -140,6 +140,11 @@ def filter_landsat8_sr_st_bands(bands):
     return list(filter(lambda band: band.startswith(('SR', 'ST')), bands))
 
 
+def filter_sentinel2_reflected_bands(bands):
+    """Filters SR (Surface Reflectance) and ST (Surface Temperature) bands from a Landsat 8 band collection."""
+    return list(filter(lambda band: band.startswith('B'), bands))
+
+
 def get_landsat8_visualization_params(band_name):
     """Returns visualization parameters based on the Landsat 8 band type."""
     visualization_defaults = {
