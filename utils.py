@@ -1,5 +1,35 @@
+"""
+Google Earth Engine Utility Functions
+
+This module provides a set of utility functions for interacting with Google Earth Engine (GEE).
+It includes functions for generating regions of interest, filtering satellite image collections,
+applying cloud masks, reducing image collections, and monitoring export tasks.
+
+Functions:
+- generate_roi_from_points(ee_client, points): Creates a convex hull region of interest from a set of points.
+- get_satellite_collection(ee_client, collection_id, start, end, points=None, roi=None, bands=None): Retrieves a filtered ImageCollection from GEE.
+- reduce_collection(collection, method="mean"): Reduces an ImageCollection using a statistical method.
+- mask_landsat_8sr(image): Applies cloud and shadow masking to a Landsat 8 Surface Reflectance image.
+- mask_sentinel2_sr(image): Applies cloud and shadow masking to a Sentinel-2 image.
+- filter_landsat8_sr_st_bands(bands): Filters Landsat 8 bands related to surface reflectance and temperature.
+- filter_sentinel2_reflected_bands(bands): Filters Sentinel-2 bands related to surface reflectance.
+- get_landsat8_visualization_params(band_name): Returns visualization parameters for Landsat 8 bands.
+- generate_date_ranges(start_year, end_year, frequency="quarterly"): Generates date ranges based on the given frequency.
+- monitor_task(task): Monitors the status of an Earth Engine export task.
+
+Dependencies:
+- ee (Google Earth Engine Python API)
+- time (Python standard library)
+
+Usage:
+This module is designed for use in Earth observation applications where GEE is utilized to process and analyze satellite imagery.
+"""
+
+
 import ee
 import time
+
+
 
 def generate_roi_from_points(ee_client: ee, points: list):
     """
