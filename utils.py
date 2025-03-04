@@ -224,3 +224,31 @@ def monitor_task(task):
             print("The export task was cancelled.")
             break
         time.sleep(1)
+
+
+def has_sentinel1_vv_vh_bands(bands):
+    """
+    Checks if a Sentinel-1 image contains both VV and VH bands.
+
+    Args:
+        bands (list): List of band names in the image.
+
+    Returns:
+        bool: True if both VV and VH bands are present, False otherwise.
+    """
+    required_bands = {"VV", "VH"}
+    return required_bands.issubset(set(bands))
+
+
+def filter_sentinel1_bands(bands):
+    """
+    Filters a list of Sentinel-1 bands, keeping only 'VV' and 'VH'.
+
+    Args:
+        bands (list): List of band names.
+
+    Returns:
+        list: Filtered list containing only 'VV' and 'VH' bands.
+    """
+    return [band for band in bands if band in {"VV", "VH"}]
+
