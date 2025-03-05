@@ -230,5 +230,49 @@ def get_sentinel1_descending_data_set_from_la_mosca():
             print(f"No Sentinel-1 images found for La Mosca in date range {date[0]} - {date[1]}")
 
 
+def get_sentinel1_ascending_data_set_from_la_mosca():
+    """
+    Retrieves and exports mean Landsat images of the La Mosca region for multiple date ranges.
+
+    - Defines a region of interest (ROI) based on predefined coordinates.
+    - Extracts sentinel 1 imagery for each date range from 2017 to 2024.
+    - Filters imagery for ascending orbit mode.
+    - Computes the first image for each period.
+    - Exports each band separately to Google Drive (organized by filename).
+
+    The exported files follow this naming convention:
+    - File name: `la_mosca_mean_{start_date}_{end_date}`
+    """
+
+    dates = generate_date_ranges(2017, 2025, 'monthly')
+
+    collection_sentinel2_path = 'COPERNICUS/S1_GRD'
+
+    for date in dates:
+
+        sentinel1_collection_la_mosca = (get_satellite_collection(ee_client=ee, collection_id=collection_sentinel2_path,
+                                                                 start=date[0], end=date[1], roi=ROI_LA_MOSCA)
+                                         .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                                         .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING')))
+        image = sentinel1_collection_la_mosca.mean().clip(ROI_LA_MOSCA).reproject(crs='EPSG:4326', scale=10)
+        bands = image.bandNames().getInfo()
+        filtered_bands = filter_sentinel1_bands(bands) if has_sentinel1_vv_vh_bands(bands) else []
+        for band in filtered_bands:
+            print(f"processing the follow band {band} of La Mosca image in this dates {date[0]}-{date[1]}")
+            description = f"Mean image La Mosca {date[0]} to {date[1]} using {band} band"
+            task = ee.batch.Export.image.toDrive(
+                image=image.select(band).visualize(**{'min': -25, 'max': 5}),
+                description=description,
+                folder=band,
+                fileNamePrefix=f"la_mosca_first_find_{date[0]}_{date[1]}",
+                region=ROI_LA_MOSCA.bounds().getInfo()['coordinates'],
+                scale=10,
+                crs='EPSG:4326',
+                maxPixels=1e13
+            )
+            task.start()
+            monitor_task(task)
+
+
 if __name__ == '__main__':
     get_sentinel1_descending_data_set_from_la_mosca()
