@@ -193,7 +193,7 @@ def get_sentinel1_descending_data_set_from_la_mosca():
     - File name: `la_mosca_mean_{start_date}_{end_date}`
     """
 
-    dates = generate_date_ranges(2022, 2025, 'monthly')
+    dates = generate_date_ranges(2017, 2025, 'monthly')
 
     collection_sentinel2_path = 'COPERNICUS/S1_GRD'
 
