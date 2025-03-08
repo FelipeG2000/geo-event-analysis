@@ -48,7 +48,7 @@ def generate_roi_from_points(ee_client: ee, points: list):
     return  ee_client.Geometry.MultiPoint(points).convexHull()
 
 
-def get_satellite_collection(ee_client, collection_id: str, start: str, end: str, points: list = None, roi = None,
+def get_satellite_collection(ee_client: ee, collection_id: str, start: str, end: str, points: list = None, roi = None,
     bands: list = None):
     """
     Retrieves a filtered ImageCollection from Google Earth Engine, supporting both points and predefined ROI.
@@ -223,7 +223,7 @@ def monitor_task(task):
         elif state == "CANCELLED":
             print("The export task was cancelled.")
             break
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 def has_sentinel1_vv_vh_bands(bands):
