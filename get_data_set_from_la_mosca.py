@@ -193,13 +193,13 @@ def get_sentinel1_descending_data_set_from_la_mosca():
     - File name: `la_mosca_mean_{start_date}_{end_date}`
     """
 
-    dates = generate_date_ranges(2017, 2025, 'monthly')
+    dates = generate_date_ranges(2023, 2023, 'monthly')
 
-    collection_sentinel2_path = 'COPERNICUS/S1_GRD'
+    collection_sentinel1_path = 'COPERNICUS/S1_GRD'
 
     for date in dates:
         sentinel1_collection_la_mosca = (
-            get_satellite_collection(ee_client=ee, collection_id=collection_sentinel2_path,
+            get_satellite_collection(ee_client=ee, collection_id=collection_sentinel1_path,
                                      start=date[0], end=date[1], roi=ROI_LA_MOSCA)
             .filter(ee.Filter.eq('instrumentMode', 'IW'))
             .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'))
@@ -275,4 +275,4 @@ def get_sentinel1_ascending_data_set_from_la_mosca():
 
 
 if __name__ == '__main__':
-    get_sentinel1_descending_data_set_from_la_mosca()
+    get_sentinel1_ascending_data_set_from_la_mosca()
