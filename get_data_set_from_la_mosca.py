@@ -99,6 +99,7 @@ def get_landsat_visualisation_data_set_from_la_mosca():
             task.start()
             monitor_task(task)
 
+
 def get_sentinel2_data_set_from_la_mosca():
     """
     Retrieves and exports mean Landsat images of the La Mosca region for multiple date ranges.
