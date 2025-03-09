@@ -1,8 +1,6 @@
 from utils import *
-import ee
+from config.ee_init import ee
 
-ee.Authenticate()
-ee.Initialize(project="investigation-project-pipe")
 
 
 POINTS_COCORNA = [[-75.205, 6.108],

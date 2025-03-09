@@ -1,16 +1,14 @@
 from utils import *
 import ee
+from config.ee_init import ee
 
 
 
-ee.Authenticate()
-ee.Initialize(project="investigation-project-pipe")
 POINTS_LA_MOSCA = [[-75.3845077, 6.2052735],
                   [-75.3363690, 6.2052617],
                   [-75.3359859, 6.1513562],
                   [-75.3847079, 6.1515247]]
 ROI_LA_MOSCA = generate_roi_from_points(ee, POINTS_LA_MOSCA)
-
 
 
 def get_landsat_data_set_from_la_mosca():

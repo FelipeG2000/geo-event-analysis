@@ -1,8 +1,7 @@
 from utils import *
-import ee
+from config.ee_init import ee
 
-ee.Authenticate()
-ee.Initialize(project="investigation-project-pipe")
+
 
 POINTS_SAN_CARLOS = [[-75.0174891, 6.2002711],
                     [-74.9691066, 6.2007604],
