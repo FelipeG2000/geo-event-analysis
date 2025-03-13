@@ -28,6 +28,8 @@ This module is designed for use in Earth observation applications where GEE is u
 
 import ee
 import time
+import rasterio
+from functools import wraps
 
 
 
@@ -80,6 +82,7 @@ def get_satellite_collection(ee_client: ee, collection_id: str, start: str, end:
         collection = collection.select(bands)
 
     return collection
+
 
 def reduce_collection(collection: ee.ImageCollection, method: str = "mean") -> ee.Image:
     """
@@ -252,3 +255,21 @@ def filter_sentinel1_bands(bands):
     """
     return [band for band in bands if band in {"VV", "VH"}]
 
+
+def preserve_georef(func):
+    @wraps(func)
+    def wrapper(image_path, *args, **kwargs):
+        #Open image with rasterio
+        with rasterio.open(image_path) as src:
+            profile = src.profile  # Save metadata (CRS, transformación, etc.)
+            original_data = src.read()  # read image as numpy array
+
+        # call the function
+        processed_data = func(original_data, *args, **kwargs)
+
+        # Save the original metadata to the processed image
+        processed_data.profile = profile
+
+        return processed_data
+
+    return wrapper
