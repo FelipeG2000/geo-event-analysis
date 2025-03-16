@@ -1,3 +1,4 @@
+from config.satellites import Landsat8, Sentinel2, Sentinel1
 from utils import *
 from config.ee_init import ee
 
@@ -13,11 +14,10 @@ ROI_SAN_CARLOS = generate_roi_from_points(ee, POINTS_SAN_CARLOS)
 def get_landsat_data_set_from_san_carlos():
     dates = generate_date_ranges(2015, 2025)
 
-    collection_landsta_path = 'LANDSAT/LC08/C02/T1_L2'
     for date in dates:
 
         landsat_collection_san_carlos = get_satellite_collection(ee_client=ee,
-                                                               collection_id=collection_landsta_path,
+                                                               collection_id=Landsat8.get_collection(),
                                                                start=date[0],
                                                                end=date[1],
                                                                roi=ROI_SAN_CARLOS)
@@ -55,12 +55,10 @@ def get_landsat_visualisation_data_set_from_san_carlos():
 
     dates = generate_date_ranges(2019, 2025)
 
-    collection_landsta_path = 'LANDSAT/LC08/C02/T1_L2'
-
     for date in dates:
 
         landsat_collection_san_carlos = get_satellite_collection(ee_client=ee,
-                                                               collection_id=collection_landsta_path,
+                                                               collection_id=Landsat8.get_collection(),
                                                                start=date[0],
                                                                end=date[1],
                                                                roi=ROI_SAN_CARLOS)
@@ -99,11 +97,9 @@ def get_sentinel2_data_set_from_san_carlos():
 
     dates = generate_date_ranges(2018, 2025)
 
-    collection_sentinel2_path = "COPERNICUS/S2_SR_HARMONIZED"
-
     for date in dates:
 
-        sentinel2_collection_san_carlos = get_satellite_collection(ee_client=ee, collection_id=collection_sentinel2_path,
+        sentinel2_collection_san_carlos = get_satellite_collection(ee_client=ee, collection_id=Sentinel2.get_collection(),
                                                                  start=date[0], end=date[1], roi=ROI_SAN_CARLOS)
         image = sentinel2_collection_san_carlos.map(mask_sentinel2_sr).mean().clip(ROI_SAN_CARLOS).reproject(crs='EPSG:4326',
                                                                                                          scale=10)
@@ -180,11 +176,9 @@ def get_sentinel1_descending_data_set_from_san_carlos():
 
     dates = generate_date_ranges(2017, 2025, 'monthly')
 
-    collection_sentinel1_path = 'COPERNICUS/S1_GRD'
-
     for date in dates:
         sentinel1_collection_san_carlos = (
-            get_satellite_collection(ee_client=ee, collection_id=collection_sentinel1_path,
+            get_satellite_collection(ee_client=ee, collection_id=Sentinel1.get_collection(),
                                      start=date[0], end=date[1], roi=ROI_SAN_CARLOS)
             .filter(ee.Filter.eq('instrumentMode', 'IW'))
             .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'))
@@ -232,11 +226,9 @@ def get_sentinel1_ascending_data_set_from_san_carlos():
 
     dates = generate_date_ranges(2017, 2025, 'monthly')
 
-    collection_sentinel1_path = 'COPERNICUS/S1_GRD'
-
     for date in dates:
         sentinel1_collection_san_carlos = (
-            get_satellite_collection(ee_client=ee, collection_id=collection_sentinel1_path,
+            get_satellite_collection(ee_client=ee, collection_id=Sentinel1.get_collection(),
                                      start=date[0], end=date[1], roi=ROI_SAN_CARLOS)
             .filter(ee.Filter.eq('instrumentMode', 'IW'))
             .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
