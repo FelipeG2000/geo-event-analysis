@@ -220,6 +220,7 @@ def get_sentinel1_descending_data_set_from_la_mosca():
                     maxPixels=1e13
                 )
                 task.start()
+                monitor_task(task)
         else:
             print(f"No Sentinel-1 images found for La Mosca in date range {date[0]} - {date[1]}")
 
@@ -267,4 +268,4 @@ def get_sentinel1_ascending_data_set_from_la_mosca():
 
 
 if __name__ == '__main__':
-    get_sentinel1_ascending_data_set_from_la_mosca()
+    get_sentinel1_descending_data_set_from_la_mosca()
