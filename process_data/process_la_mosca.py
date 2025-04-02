@@ -1,10 +1,14 @@
 import rasterio
-import matplotlib.pyplot as plt
+import os
+import glob
 import numpy as np
 
 from process_data.process_images_tools import GeoImageProcessor
 
-BASEPATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/landsat8/bands"
+# Base path where Sentinel-2 images are stored
+BASEPATH_B3 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B3"
+BASEPATH_B8 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B8"
+OUTPUT_DIR = "NDWI"
 
 def scale_to_8bit(image):
     """
@@ -15,46 +19,36 @@ def scale_to_8bit(image):
     image = np.clip(image * 255, 0, 255).astype(np.uint8)  # Scale to [0, 255] safely
     return image
 
-def create_ndvi_from_la_mosca():
-    with rasterio.open(BASEPATH + '/sentinel1/descending/VH/la_mosca_first_find_2017-05-01_2017-05-31.tif') as src:
-        data = src.read(1)
-        imagenir_profile = src.profile
-        imagenir_meta = src.meta
-    plt.figure(figsize=(8, 6))
-    plt.imshow(data, cmap="gray")
-    plt.colorbar(label="Intensity")
-    plt.xlabel("Columns")
-    plt.ylabel("Rows")
-    plt.show()
-
 
 def calculate_index(band1, band2):
     """Computes a normalized difference index like NDVI or NDWI."""
     return (band1 - band2) / (band1 + band2 + 1e-6)  # Avoid division by zero
 
 
+def get_ndwi_la_mosca():
+    """
+    Processes all Sentinel-2 images in the given directories to compute NDWI and save results.
+    """
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    band3_files = sorted(glob.glob(os.path.join(BASEPATH_B3, "*.tif")))
+    band8_files = sorted(glob.glob(os.path.join(BASEPATH_B8, "*.tif")))
+
+    for b3_path, b8_path in zip(band3_files, band8_files):
+        filename = os.path.basename(b3_path)
+        output_filename = filename.replace("mean", "ndwi")
+        output_path = os.path.join(OUTPUT_DIR, output_filename)
+
+        geo_b3 = GeoImageProcessor(b3_path)
+        geo_b8 = GeoImageProcessor(b8_path)
+
+        ndwi = calculate_index(geo_b8.data, geo_b3.data)
+        geo_b3.data = scale_to_8bit(ndwi)
+        geo_b3.save(output_path)
+
+        print(f"Processed: {output_filename}")
+
+
 if __name__ == "__main__":
-    image1_la_mosca = "/home/felipe/MiDrive/GEE_Exports/la_mosca/landsat8/bands/SR_B5/la_mosca_mean_2021-10-01_2021-12-31.tif"
-    image2_la_mosca = "/home/felipe/MiDrive/GEE_Exports/la_mosca/landsat8/bands/SR_B4/la_mosca_mean_2021-10-01_2021-12-31.tif"
-    geo_image = GeoImageProcessor(image1_la_mosca)
-    geo_red = GeoImageProcessor(image2_la_mosca)
-
-    ndvi = calculate_index(geo_image.data, geo_red.data)
-    geo_image.data = scale_to_8bit(ndvi)
-    geo_image.save("/home/felipe/MiDrive/concept_proof.tif")
-    plt.figure(figsize=(8, 6))
-    plt.imshow(ndvi, cmap="Reds")
-    plt.colorbar(label="Intensity")
-    plt.xlabel("Columns")
-    plt.ylabel("Rows")
-    plt.show()
-
-
-
-
-
-
-
-
-
+    get_ndwi_la_mosca()
 
