@@ -8,7 +8,7 @@ from process_data.process_images_tools import GeoImageProcessor
 # Base path where Sentinel-2 images are stored
 BASEPATH_B3 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B3"
 BASEPATH_B8 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B8"
-OUTPUT_DIR = "NDWI"
+OUTPUT_DIR = "ndwi"
 
 def scale_to_8bit(image):
     """
@@ -42,7 +42,7 @@ def get_ndwi_la_mosca():
         geo_b3 = GeoImageProcessor(b3_path)
         geo_b8 = GeoImageProcessor(b8_path)
 
-        ndwi = calculate_index(geo_b8.data, geo_b3.data)
+        ndwi = calculate_index(geo_b3.data, geo_b8.data)
         geo_b3.data = scale_to_8bit(ndwi)
         geo_b3.save(output_path)
 
