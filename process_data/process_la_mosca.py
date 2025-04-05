@@ -1,28 +1,14 @@
-import rasterio
 import os
 import glob
-import numpy as np
 
-from process_data.process_images_tools import GeoImageProcessor
+from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit
+
+
 
 # Base path where Sentinel-2 images are stored
 BASEPATH_B3 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B3"
 BASEPATH_B8 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B8"
 OUTPUT_DIR = "ndwi"
-
-def scale_to_8bit(image):
-    """
-    Converts an image with values in range [-1, 1] to [0, 255] for visualization.
-    """
-    image = np.nan_to_num(image, nan=0, posinf=1, neginf=0)  # Remove NaNs again just in case
-    image = (image + 1) / 2  # Scale from [-1, 1] to [0, 1]
-    image = np.clip(image * 255, 0, 255).astype(np.uint8)  # Scale to [0, 255] safely
-    return image
-
-
-def calculate_index(band1, band2):
-    """Computes a normalized difference index like NDVI or NDWI."""
-    return (band1 - band2) / (band1 + band2 + 1e-6)  # Avoid division by zero
 
 
 def get_ndwi_la_mosca():
