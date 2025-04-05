@@ -50,3 +50,17 @@ class GeoImageProcessor:
             dst.write(self.data, 1)
             dst.close()
 
+
+def scale_to_8bit(image):
+    """
+    Converts an image with values in range [-1, 1] to [0, 255] for visualization.
+    """
+    image = np.nan_to_num(image, nan=0, posinf=1, neginf=0)  # Remove NaNs again just in case
+    image = (image + 1) / 2  # Scale from [-1, 1] to [0, 1]
+    image = np.clip(image * 255, 0, 255).astype(np.uint8)  # Scale to [0, 255] safely
+    return image
+
+
+def calculate_index(band1, band2):
+    """Computes a normalized difference index like NDVI or NDWI."""
+    return (band1 - band2) / (band1 + band2 + 1e-6)  # Avoid division by zero
