@@ -49,7 +49,7 @@ def get_ndvi_la_mosca():
     for b4_path, b8_path in zip(band4_files, band8_files):
         filename = os.path.basename(b4_path)
         output_filename = filename.replace("mean", "ndvi")
-        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        output_path = os.path.join(NDVI_DIR, output_filename)
 
         geo_b4 = GeoImageProcessor(b4_path)
         geo_b8 = GeoImageProcessor(b8_path)
