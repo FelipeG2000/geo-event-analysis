@@ -1,11 +1,13 @@
 import os
 import glob
 
-from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH_LANDSAT8, BASEPATH_SENTINEL2
+from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH, NDWI_DIR, NDVI_DIR
 
 
-NDWI_DIR = "ndwi"
-NDVI_DIR = "ndvi"
+
+BASEPATH_LANDSAT8 = f"{BASEPATH}/la_mosca/landsat8/bands/"
+BASEPATH_SENTINEL2 = f"{BASEPATH}/la_mosca/sentinel2/bands/"
+
 
 
 def get_ndwi_la_mosca():

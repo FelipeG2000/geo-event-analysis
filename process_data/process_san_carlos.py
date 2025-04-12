@@ -1,20 +1,20 @@
 import os
 import glob
 
-from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH_SENTINEL2, BASEPATH_LANDSAT8
+from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH, NDWI_DIR, NDVI_DIR
 
 
 
-# Base path where Sentinel-2 images are stored
-OUTPUT_DIR = "ndwi"
-NDVI_DIR = "ndvi"
+BASEPATH_LANDSAT8 = f"{BASEPATH}/san_carlos/landsat8/bands/"
+BASEPATH_SENTINEL2 = f"{BASEPATH}/san_carlos/sentinel2/bands/"
+
 
 
 def get_ndwi_san_carlos_sentinel2():
     """
     Processes all Sentinel-2 images in the given directories to compute NDWI and save results.
     """
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(NDWI_DIR, exist_ok=True)
 
     band3_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B3', "*.tif")))
     band8_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B8', "*.tif")))
@@ -22,7 +22,7 @@ def get_ndwi_san_carlos_sentinel2():
     for b3_path, b8_path in zip(band3_files, band8_files):
         filename = os.path.basename(b3_path)
         output_filename = filename.replace("mean", "ndwi")
-        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        output_path = os.path.join(NDWI_DIR, output_filename)
 
         geo_b3 = GeoImageProcessor(b3_path)
         geo_b8 = GeoImageProcessor(b8_path)
@@ -38,7 +38,7 @@ def get_ndvi_san_carlos_sentinel2():
     """
     Processes all Sentinel-2 images in the given directories to compute NDVI and save results.
     """
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(NDVI_DIR, exist_ok=True)
 
     band4_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + "B4", "*.tif")))
     band8_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + "B8", "*.tif")))
