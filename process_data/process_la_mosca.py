@@ -10,7 +10,7 @@ BASEPATH_B3 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B3"
 BASEPATH_B4 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B4"
 BASEPATH_B8 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/B8"
 OUTPUT_DIR = "ndwi"
-NDVI_DIR = "ndwi"
+NDVI_DIR = "ndvi"
 
 
 def get_ndwi_la_mosca():
@@ -54,8 +54,8 @@ def get_ndvi_la_mosca():
         geo_b4 = GeoImageProcessor(b4_path)
         geo_b8 = GeoImageProcessor(b8_path)
 
-        ndwi = calculate_index(geo_b8.data, geo_b4.data)
-        geo_b4.data = scale_to_8bit(ndwi)
+        ndvi = calculate_index(geo_b8.data, geo_b4.data)
+        geo_b4.data = scale_to_8bit(ndvi)
         geo_b4.save(output_path)
 
         print(f"Processed: {output_filename}")
