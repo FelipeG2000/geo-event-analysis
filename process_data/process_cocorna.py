@@ -1,25 +1,22 @@
 import os
 import glob
 
-from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit
+from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH_LANDSAT8, BASEPATH_SENTINEL2
 
 
 
 # Base path where Sentinel-2 images are stored
-BASEPATH_B3 = "/home/felipe/MiDrive/GEE_Exports/cocorna/sentinel2/bands/B3"
-BASEPATH_B4 = "/home/felipe/MiDrive/GEE_Exports/cocorna/sentinel2/bands/B4"
-BASEPATH_B8 = "/home/felipe/MiDrive/GEE_Exports/cocorna/sentinel2/bands/B8"
 OUTPUT_DIR = "ndwi"
 NDVI_DIR = "ndvi"
 
-def get_ndwi_cocorna():
+def get_ndwi_cocorna_sentinel2():
     """
     Processes all Sentinel-2 images in the given directories to compute NDWI and save results.
     """
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    band3_files = sorted(glob.glob(os.path.join(BASEPATH_B3, "*.tif")))
-    band8_files = sorted(glob.glob(os.path.join(BASEPATH_B8, "*.tif")))
+    band3_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B3', "*.tif")))
+    band8_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B8', "*.tif")))
 
     for b3_path, b8_path in zip(band3_files, band8_files):
         filename = os.path.basename(b3_path)
@@ -36,14 +33,14 @@ def get_ndwi_cocorna():
         print(f"Processed: {output_filename}")
 
 
-def get_ndvi_cocorna():
+def get_ndvi_cocorna_sentinel2():
     """
     Processes all Sentinel-2 images in the given directories to compute NDVI and save results.
     """
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    band4_files = sorted(glob.glob(os.path.join(BASEPATH_B4, "*.tif")))
-    band8_files = sorted(glob.glob(os.path.join(BASEPATH_B8, "*.tif")))
+    band4_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B4', "*.tif")))
+    band8_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + 'B8', "*.tif")))
 
     for b4_path, b8_path in zip(band4_files, band8_files):
         filename = os.path.basename(b4_path)
@@ -60,5 +57,4 @@ def get_ndvi_cocorna():
         print(f"Processed: {output_filename}")
 
 if __name__ == "__main__":
-    get_ndvi_cocorna()
-
+    get_ndvi_cocorna_sentinel2

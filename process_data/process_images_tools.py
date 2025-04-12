@@ -1,6 +1,11 @@
 import rasterio
 import numpy as np
 
+
+BASEPATH_SENTINEL2 ='/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel2/bands/'
+BASEPATH_LANDSAT8 = "/home/felipe/MiDrive/GEE_Exports/la_mosca/landsat8/bands/"
+
+
 class GeoImageProcessor:
     """
     Handles georeferenced image processing efficiently.
