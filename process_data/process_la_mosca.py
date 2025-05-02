@@ -59,6 +59,30 @@ def get_ndvi_la_mosca():
         print(f"Processed: {output_filename}")
 
 
+def get_ndbi_san_carlos_sentinel2():
+    """
+    Processes all Sentinel-2 images in the given directories to compute NDBI and save results.
+    """
+    os.makedirs(NDBI_DIR, exist_ok=True)
+
+    band11_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + "B11", "*.tif")))  # SWIR
+    band8_files = sorted(glob.glob(os.path.join(BASEPATH_SENTINEL2 + "B8", "*.tif")))    # NIR
+
+    for b11_path, b8_path in zip(band11_files, band8_files):
+        filename = os.path.basename(b11_path)
+        output_filename = filename.replace("mean", "ndbi")
+        output_path = os.path.join(NDBI_DIR, output_filename)
+
+        geo_b11 = GeoImageProcessor(b11_path)
+        geo_b8 = GeoImageProcessor(b8_path)
+
+        ndbi = calculate_index(geo_b11.data, geo_b8.data)  # (SWIR - NIR) / (SWIR + NIR)
+        geo_b11.data = scale_to_8bit(ndbi)
+        geo_b11.save(output_path)
+
+        print(f"Processed Sentinel-2 NDBI: {output_filename}")
+
+
 def get_ndvi_la_mosca_landsat8():
     """
     Processes all Landsat 8 images in the given directories to compute NDVI and save results.
@@ -131,5 +155,5 @@ def get_ndbi_la_mosca_landsat8():
         print(f"Processed Landsat 8 NDBI: {output_filename}")
 
 if __name__ == "__main__":
-    get_ndbi_la_mosca_landsat8()
+    get_ndbi_san_carlos_sentinel2()
 
