@@ -5,7 +5,7 @@ import numpy as np
 BASEPATH ="/home/felipe/MiDrive/GEE_Exports/"
 NDWI_DIR = "ndwi"
 NDVI_DIR = "ndvi"
-
+NDBI_DIR = "ndbi"
 
 class GeoImageProcessor:
     """

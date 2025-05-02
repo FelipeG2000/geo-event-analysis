@@ -1,7 +1,8 @@
 import os
 import glob
 
-from process_data.process_images_tools import GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH, NDWI_DIR, NDVI_DIR
+from process_data.process_images_tools import (GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH, NDWI_DIR,
+                                               NDVI_DIR, NDBI_DIR)
 
 
 BASEPATH_LANDSAT8 = f"{BASEPATH}/cocorna/landsat8/bands/"
@@ -105,5 +106,29 @@ def get_ndwi_cocorna_landsat8():
         print(f"Processed Landsat 8 NDWI: {output_filename}")
 
 
+def get_ndbi_cocorna_landsat8():
+    """
+    Processes all Landsat 8 images in the given directories to compute NDBI and save results.
+    """
+    os.makedirs(NDBI_DIR, exist_ok=True)
+
+    band6_files = sorted(glob.glob(os.path.join(BASEPATH_LANDSAT8 + 'SR_B6', "*.tif")))  # SWIR
+    band5_files = sorted(glob.glob(os.path.join(BASEPATH_LANDSAT8 + 'SR_B5', "*.tif")))  # NIR
+
+    for b6_path, b5_path in zip(band6_files, band5_files):
+        filename = os.path.basename(b6_path)
+        output_filename = filename.replace("mean", "ndbi")
+        output_path = os.path.join(NDBI_DIR, output_filename)
+
+        geo_b6 = GeoImageProcessor(b6_path)
+        geo_b5 = GeoImageProcessor(b5_path)
+
+        ndbi = calculate_index(geo_b6.data, geo_b5.data)  # (SWIR - NIR) / (SWIR + NIR)
+        geo_b6.data = scale_to_8bit(ndbi)
+        geo_b6.save(output_path)
+
+        print(f"Processed Landsat 8 NDBI: {output_filename}")
+
+
 if __name__ == "__main__":
-    get_ndvi_cocorna_landsat8()
+    get_ndbi_cocorna_landsat8()
