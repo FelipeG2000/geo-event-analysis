@@ -59,7 +59,7 @@ def get_ndvi_la_mosca():
         print(f"Processed: {output_filename}")
 
 
-def get_ndbi_san_carlos_sentinel2():
+def get_ndbi_la_mosca_sentinel2():
     """
     Processes all Sentinel-2 images in the given directories to compute NDBI and save results.
     """
