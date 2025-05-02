@@ -82,6 +82,30 @@ def get_ndvi_la_mosca_landsat8():
         print(f"Processed Landsat 8 NDVI: {output_filename}")
 
 
+def get_ndwi_la_mosca_landsat8():
+    """
+    Processes all Landsat 8 images in the given directories to compute NDWI and save results.
+    """
+    os.makedirs(NDVI_DIR, exist_ok=True)
+
+    band3_files = sorted(glob.glob(os.path.join(BASEPATH_LANDSAT8 + 'SR_B3', "*.tif")))
+    band5_files = sorted(glob.glob(os.path.join(BASEPATH_LANDSAT8 + 'SR_B5', "*.tif")))
+
+    for b3_path, b5_path in zip(band3_files, band5_files):
+        filename = os.path.basename(b3_path)
+        output_filename = filename.replace("mean", "ndwi")
+        output_path = os.path.join(NDWI_DIR, output_filename)
+
+        geo_b3 = GeoImageProcessor(b3_path)
+        geo_b5 = GeoImageProcessor(b5_path)
+
+        ndwi = calculate_index(geo_b5.data, geo_b3.data)
+        geo_b3.data = scale_to_8bit(ndwi)
+        geo_b3.save(output_path)
+
+        print(f"Processed Landsat 8 NDWI: {output_filename}")
+
+
 if __name__ == "__main__":
-    get_ndvi_la_mosca_landsat8()
+    get_ndwi_la_mosca_landsat8()
 
