@@ -30,7 +30,7 @@ import ee
 import time
 import rasterio
 from functools import wraps
-
+import numpy as np
 
 
 def generate_roi_from_points(ee_client: ee, points: list):
@@ -101,6 +101,32 @@ def reduce_collection(collection: ee.ImageCollection, method: str = "mean") -> e
         return collection.median()
     else:
         raise collection.first()
+
+
+def embed_in_center(image, target_size=(512, 512)):
+    """
+    Embeds a smaller (or cropped) image into the center of a 512x512 black canvas.
+    If the image is larger than the target, it is center-cropped.
+    """
+    h, w = image.shape
+    th, tw = target_size
+
+    # Crop if necessary
+    if h > th:
+        h_start = (h - th) // 2
+        image = image[h_start:h_start + th, :]
+        h = th
+    if w > tw:
+        w_start = (w - tw) // 2
+        image = image[:, w_start:w_start + tw]
+        w = tw
+
+    # Now embed in center
+    canvas = np.zeros((th, tw), dtype=image.dtype)
+    y_offset = (th - h) // 2
+    x_offset = (tw - w) // 2
+    canvas[y_offset:y_offset + h, x_offset:x_offset + w] = image
+    return canvas
 
 
 def mask_landsat_8sr(image):
