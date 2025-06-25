@@ -10,6 +10,8 @@ NDBI_DIR = "ndbi"
 TILE_SIZE = 512
 OVERLAP = 0
 
+OUTPUT_VV_DESPECKLED = "VV_despeckled"
+OUTPUT_VH_DESPECKLED = "VH_despeckled"
 MODEL_PATH = 'Autoencoder_despeckling.h5'
 model = load_model(MODEL_PATH, compile=False)
 

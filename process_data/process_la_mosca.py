@@ -2,7 +2,8 @@ import os
 import glob
 
 from process_data.process_images_tools import (GeoImageProcessor, calculate_index, scale_to_8bit, BASEPATH, NDWI_DIR,
-                                               NDVI_DIR, NDBI_DIR, TILE_SIZE, filter_large_image)
+                                               NDVI_DIR, NDBI_DIR, TILE_SIZE, filter_large_image, OUTPUT_VV_DESPECKLED,
+                                               OUTPUT_VH_DESPECKLED)
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -12,10 +13,10 @@ BASEPATH_SENTINEL2 = f"{BASEPATH}/la_mosca/sentinel2/bands/"
 NDVI_DIR = f"{BASEPATH}la_mosca/sentinel2/processed/indices/ndvi"
 NDWI_DIR = f"{BASEPATH}la_mosca/sentinel2/processed/indices/ndbi"
 SENTINEL1_VV_PATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel1/descending/VV"
-SENTINEL1_ASCENDING_VV_PATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel1/ascending/VV"
 SENTINEL1_VH_PATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel1/descending/VH"
-OUTPUT_VV_DESPECKLED = "VV_despeckled"
-OUTPUT_VH_DESPECKLED = "VH_despeckled"
+SENTINEL1_ASCENDING_VV_PATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel1/ascending/VV"
+SENTINEL1_ASCENDING_VH_PATH = "/home/felipe/MiDrive/GEE_Exports/la_mosca/sentinel1/ascending/VH"
+
 def get_ndwi_la_mosca():
     """
     Processes all Sentinel-2 images in the given directories to compute NDWI and save results.
@@ -202,6 +203,27 @@ def get_filtered_sentinel1_ascending_vv_la_mosca():
         print(f"✅ Processed: {output_filename}")
 
 
+def get_filtered_sentinel1_ascending_vh_la_mosca():
+    os.makedirs(OUTPUT_VH_DESPECKLED, exist_ok=True)
+    image_paths = sorted(glob.glob(os.path.join(SENTINEL1_ASCENDING_VH_PATH, "*.tif")))
+    count=0
+    for image_path in image_paths:
+        count += 1
+        filename = os.path.basename(image_path)
+        output_filename = filename.replace("first_find", "filtered")
+        output_path = os.path.join(OUTPUT_VH_DESPECKLED, output_filename)
+        image = GeoImageProcessor(image_path)
+
+        h, w = image.data.shape
+
+        if h > TILE_SIZE or w > TILE_SIZE:
+            image.data = filter_large_image(image.data)
+            print(f"cuenta = {count}")
+        image.save(output_path)
+
+        print(f"✅ Processed: {output_filename}")
+
+
 def get_filtered_sentinel1_descending_vh_la_mosca():
     os.makedirs(OUTPUT_VH_DESPECKLED, exist_ok=True)
     image_paths = sorted(glob.glob(os.path.join(SENTINEL1_VH_PATH, "*.tif")))
@@ -253,5 +275,5 @@ def experimento_interesante():
     plt.show()
 
 if __name__ == "__main__":
-    get_filtered_sentinel1_ascending_vv_la_mosca()
+    get_filtered_sentinel1_ascending_vh_la_mosca()
 
